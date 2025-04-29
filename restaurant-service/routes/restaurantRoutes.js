@@ -24,6 +24,18 @@ router.get("/", async (req, res) => {
     res.json(restaurants);
 });
 
+router.get('/menus', async (req, res) => {
+    try {
+        const menuItems = await MenuItem.find()
+            .populate('restaurantId', 'name') // Optional: still show which restaurant it belongs to
+            .exec();
+        res.json(menuItems);
+    } catch (err) {
+        console.error('Error fetching all menu items:', err);
+        res.status(500).json({ message: 'Error fetching menu items' });
+    }
+});
+
 router.get("/:id", async (req, res) => {
     try {
         const restaurant = await Restaurant.findById(req.params.id);
@@ -37,17 +49,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.get('/menus', async (req, res) => {
-    try {
-        const menuItems = await MenuItem.find()
-            .populate('restaurantId', 'name') // Optional: still show which restaurant it belongs to
-            .exec();
-        res.json(menuItems);
-    } catch (err) {
-        console.error('Error fetching all menu items:', err);
-        res.status(500).json({ message: 'Error fetching menu items' });
-    }
-});
+
 
 
 
