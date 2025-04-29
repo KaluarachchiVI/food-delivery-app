@@ -9,7 +9,7 @@ const {
     confirmOrder,
 } = require("../controllers/orderController");
 
-router.post("/", authenticate, placeOrder);
+router.post("/orders", authenticate, placeOrder);
 router.put("/:id", authenticate, updateOrderStatus);
 router.get("/", authenticate, getCustomerOrders);
 router.patch("/:orderId/modify", authenticate, modifyOrder);
