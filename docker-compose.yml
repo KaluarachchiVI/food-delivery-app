@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  restaurant-service:
+    build: ./restaurant-service
+    container_name: restaurant-service
+    env_file:
+      - .env
+    ports:
+      - "${PORT_RESTAURANT}:${PORT_RESTAURANT}"
+    environment:
+      - PORT=${PORT_RESTAURANT}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+
+  auth-service:
+    build:
+      context: ./auth-service # Add the context for the auth-service directory
+      dockerfile: Dockerfile # Specify the Dockerfile in the auth-service directory
+    container_name: auth-service
+    env_file:
+      - .env
+    ports:
+      - "${PORT_AUTH}:${PORT_AUTH}"
+    environment:
+      - PORT=${PORT_AUTH}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    env_file:
+      - .env
+    ports:
+      - "${PORT_ORDER}:${PORT_ORDER}"
+    environment:
+      - PORT=${PORT_ORDER}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - RESTAURANT_SERVICE_URL=http://restaurant-service:${PORT_RESTAURANT}
+      - DELIVERY_SERVICE_URL=http://delivery-service:${PORT_DELIVERY}
+
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    env_file:
+      - .env
+    ports:
+      - "${PORT_PAYMENT}:${PORT_PAYMENT}"
+    environment:
+      - PORT=${PORT_PAYMENT}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    env_file:
+      - .env
+    ports:
+      - "${PORT_NOTIFICATION}:${PORT_NOTIFICATION}"
+    environment:
+      - PORT=${PORT_NOTIFICATION}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./notification-service/fcm/serviceAccountKey.json:/usr/src/app/serviceAccountKey.json
+
+  delivery-service:
+    build: ./delivery-service
+    container_name: delivery-service
+    env_file:
+      - .env
+    ports:
+      - "${PORT_DELIVERY}:${PORT_DELIVERY}"
+    environment:
+      - PORT=${PORT_DELIVERY}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - ORDER_SERVICE_URL=http://order-service:${PORT_ORDER}
+      - NOTIFICATION_SERVICE_URL=http://notification-service:${PORT_NOTIFICATION}

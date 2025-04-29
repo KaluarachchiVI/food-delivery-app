@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: vihanduk/order-service
+          ports:
+            - containerPort: 5002
+          env:
+            - name: PORT
+              value: "5002"
+            - name: MONGO_URI
+              value: mongodb+srv://vihanduk:vinu@f-deli.arknvgo.mongodb.net/
+            - name: JWT_SECRET
+              value: 1f48fbd0c4d54d82a61b2de43606ae88ef8d9d92a21560a3d8df3bb2a985e4f2
+            - name: RESTAURANT_SERVICE_URL
+              value: http://restaurant-service:5000
+            - name: DELIVERY_SERVICE_URL
+              value: http://delivery-service:5005

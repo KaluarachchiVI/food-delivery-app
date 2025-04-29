@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: vihanduk/notification-service:latest
+          ports:
+            - containerPort: 5004
+          env:
+            - name: PORT
+              value: "5004"
+            - name: MONGO_URI
+              value: mongodb+srv://vihanduk:vinu@f-deli.arknvgo.mongodb.net/test?retryWrites=true&w=majority
+
+            - name: JWT_SECRET
+              value: 1f48fbd0c4d54d82a61b2de43606ae88ef8d9d92a21560a3d8df3bb2a985e4f2
+          volumeMounts:
+            - name: fcm-key
+              mountPath: /usr/src/app/serviceAccountKey.json
+              subPath: serviceAccountKey.json
+      volumes:
+        - name: fcm-key
+          secret:
+            secretName: fcm-key

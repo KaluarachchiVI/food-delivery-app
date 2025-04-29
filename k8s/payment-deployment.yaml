@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: vihanduk/payment-service
+          ports:
+            - containerPort: 5003
+          env:
+            - name: PORT
+              value: "5003"
+            - name: MONGO_URI
+              value: mongodb+srv://vihanduk:vinu@f-deli.arknvgo.mongodb.net/
+            - name: JWT_SECRET
+              value: 1f48fbd0c4d54d82a61b2de43606ae88ef8d9d92a21560a3d8df3bb2a985e4f2
